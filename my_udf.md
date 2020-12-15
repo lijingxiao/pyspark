@@ -27,6 +27,20 @@ def get_standard_udf(column):
 type(np.random.choice(np.arange(10))) #numpy.int64
 ```
 
+## key映射value
+```python
+def get_mapval_udf(col):
+    dicts=col_dict[col]
+    logger.info(dicts)
+    def string2dict_val(x):
+        return dicts[x] if x in dicts else 'null'
+#     mapval_udf=F.udf(lambda x: string2dict_val(col), StringType())
+    mapval_udf=F.udf(string2dict_val, StringType())
+    return mapval_udf
+    
+item_df=item_df.withColumn(col+"__name",get_mapval_udf(col)(col))
+```
+
 ## array均值
 其实通过拆解成多列，求avg然后再合并的方式更快
 ```python
